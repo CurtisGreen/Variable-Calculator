@@ -2,7 +2,8 @@
 Calculator implemented as a recursive descent parser modified to work with variables and functions 
 
 ### Setup
-Compile: `g++ main.cpp recursive_calculator.cpp`
+* Compile: `g++ main.cpp recursive_calculator.cpp -o calc`
+* Run: `./calc`
 
 ### TODO
 * Fix issue where variables can't have numbers or underscores
