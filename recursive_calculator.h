@@ -29,7 +29,7 @@ class Calculator {
 public:
 	virtual ~Calculator();
 	virtual double getValue() = 0;
-protected
+protected:
 	static std::map<std::string, double> variables;
 	static std::string currentVar;
 };
@@ -83,7 +83,7 @@ public:
 // Term
 class Term : public Calculator {
 private:
-	std:deque<Unary*> values;
+	std::deque<Unary*> values;
 	std::deque<char> operators;
 public:
 	Term(std::istream& in);

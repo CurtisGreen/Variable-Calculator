@@ -11,7 +11,7 @@
 static void ignoreSpace(std::istream& in);
 static char getChar(std::istream& in);
 
-static void ignoreSpace(std::istream& in) P
+static void ignoreSpace(std::istream& in) {
 	while(isspace(in.peek())) {
 		in.get();
 	}
@@ -40,12 +40,12 @@ RunCalculator::RunCalculator(std::string input) {
 	processInput();
 }
 
-RunCalculator::~RunCalculator() {
-	delete mainExpression;
-}
-
 RunCalculator::RunCalculator() {
 	processInput();
+}
+
+RunCalculator::~RunCalculator() {
+	delete mainExpression;
 }
 
 void RunCalculator::doCalculation(std::string input) {
@@ -77,7 +77,7 @@ Number::Number(std::istream& in) {
 	ignoreSpace(in);
 	in >> value;
 	if (!in) {
-		throw parserError();
+		throw ParseError();
 		return;
 	}
 	ignoreSpace(in);
@@ -148,17 +148,18 @@ double Factor::getValue() {
 	}
 	else {
 		switch (nameType) {
-			case func:
+			case func: {
 				if (name == "sin") {
 					return sin(expression->getValue());
 				}
 				else if (name == "cos") {
-					return cos(expression->getValue();
+					return cos(expression->getValue());
 				}
 				else if (name == "tan") {
 					return tan(expression->getValue());
 				}
-				break;
+				return 0;
+			}
 			case var: {
 				// Look up var name and return
 				std::map<std::string, double>::iterator varIter = variables.find(name);
@@ -171,10 +172,12 @@ double Factor::getValue() {
 				}
 				break;
 			}
-			case assign:
+			case assign: {
 				currentVar = name;
 				return 0;
 			}
+			default:
+				return 0;
 		}
 	}
 }
@@ -207,7 +210,7 @@ Term::Term(std::istream& in ) {
 	while (in.peek() == '*' || in.peek() == '/') {
 		operators.push_back(getChar(in));
 		// Left operand
-		values.push-back(new Unary(in)); 
+		values.push_back(new Unary(in)); 
 	}
 }
 
@@ -232,11 +235,11 @@ double Term::getValue() {
 
 // Expression
 Expression::Expression(std::istream& in) {
-	ignoreSpaces(in);
+	ignoreSpace(in);
 	values.push_back(new Term(in));
 	while (in.peek() == '+' || in.peek() == '-' || in.peek() == '=') {
 		operators.push_back(getChar(in));
-		values.push-back(new Term(in));
+		values.push_back(new Term(in));
 	}
 }
 
@@ -249,14 +252,14 @@ Expression::~Expression() {
 double Expression::getValue() {
 	bool isAssign = false;
 	double output = values[0]->getValue();
-	for (int i = 0; i < values.size(); i++) {
+	for (int i = 1; i < values.size(); i++) {
 		if (operators[i-1] == '+') {
 			output += values[i]->getValue();
 		}
 		else if (operators[i-1] == '=') {
 			isAssign = true;
 			// Add in missed value from =
-			output += values[i]->getvalue();
+			output += values[i]->getValue();
 		}
 		else {
 			output -= values[i]->getValue();

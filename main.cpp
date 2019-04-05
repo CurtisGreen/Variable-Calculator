@@ -7,6 +7,7 @@
 int main(int numParams, char* params[]) {
 	if (numParams == 1) { 
 		RunCalculator();
+	}
 	else {
 		RunCalculator(params[1]);
 	}
